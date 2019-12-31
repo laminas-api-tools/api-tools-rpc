@@ -1,15 +1,17 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZFTest\Rpc\Factory;
+namespace LaminasTest\ApiTools\Rpc\Factory;
 
 use Interop\Container\ContainerInterface;
+use Laminas\ApiTools\Rpc\Factory\OptionsListenerFactory;
+use Laminas\ApiTools\Rpc\OptionsListener;
 use PHPUnit_Framework_TestCase as TestCase;
-use ZF\Rpc\Factory\OptionsListenerFactory;
-use ZF\Rpc\OptionsListener;
 
 class OptionsListenerFactoryTest extends TestCase
 {
@@ -43,7 +45,7 @@ class OptionsListenerFactoryTest extends TestCase
     {
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn([
-            'zf-rpc' => [
+            'api-tools-rpc' => [
                 'foo' => 'bar',
             ],
         ]);
