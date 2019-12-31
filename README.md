@@ -1,9 +1,9 @@
 RPC
 ===
 
-[![Build Status](https://travis-ci.org/zfcampus/zf-rpc.png)](https://travis-ci.org/zfcampus/zf-rpc)
+[![Build Status](https://travis-ci.org/laminas-api-tools/api-tools-rpc.png)](https://travis-ci.org/laminas-api-tools/api-tools-rpc)
 
-Module for implementing RPC web services in ZF2.
+Module for implementing RPC web services in Laminas.
 
 Enables:
 

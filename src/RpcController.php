@@ -1,14 +1,16 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZF\Rpc;
+namespace Laminas\ApiTools\Rpc;
 
-use Zend\Mvc\Controller\AbstractActionController as BaseAbstractActionController;
-use Zend\Mvc\MvcEvent;
-use Zend\View\Model;
+use Laminas\Mvc\Controller\AbstractActionController as BaseAbstractActionController;
+use Laminas\Mvc\MvcEvent;
+use Laminas\View\Model;
 
 class RpcController extends BaseAbstractActionController
 {
@@ -24,7 +26,7 @@ class RpcController extends BaseAbstractActionController
     {
         $routeMatch = $e->getRouteMatch();
 
-        $contentNegotiationParams = $e->getParam('ZFContentNegotiationParameterData');
+        $contentNegotiationParams = $e->getParam('LaminasContentNegotiationParameterData');
         if ($contentNegotiationParams) {
             $routeParameters = $contentNegotiationParams->getRouteParams();
         } else {
@@ -53,7 +55,7 @@ class RpcController extends BaseAbstractActionController
         $dispatchParameters = $parameterMatcher->getMatchedParameters($callable, $routeParameters);
         $result = call_user_func_array($callable, $dispatchParameters);
 
-        $e->setParam('ZFContentNegotiationFallback', array('Zend\View\Model\JsonModel' => array('application/json')));
+        $e->setParam('LaminasContentNegotiationFallback', array('Laminas\View\Model\JsonModel' => array('application/json')));
         $e->setResult($result);
     }
 
