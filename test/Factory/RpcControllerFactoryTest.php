@@ -1,21 +1,23 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZFTest\Rpc\Factory;
+namespace LaminasTest\ApiTools\Rpc\Factory;
 
+use Laminas\ApiTools\Rpc\Factory\RpcControllerFactory;
 use PHPUnit_Framework_TestCase as TestCase;
 use ReflectionProperty;
-use ZF\Rpc\Factory\RpcControllerFactory;
 
 class RpcControllerFactoryTest extends TestCase
 {
     public function setUp()
     {
-        $this->services = $services = $this->prophesize('Zend\ServiceManager\ServiceLocatorInterface');
-        $this->controllers = $this->prophesize('Zend\Mvc\Controller\ControllerManager');
+        $this->services = $services = $this->prophesize('Laminas\ServiceManager\ServiceLocatorInterface');
+        $this->controllers = $this->prophesize('Laminas\Mvc\Controller\ControllerManager');
         $this->controllers->getServiceLocator()->will(function () use ($services) {
             return $services->reveal();
         });
@@ -28,7 +30,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testWillPullNonCallableStaticCallableFromControllerManagerIfServiceIsPresent()
     {
         $config = [
-            'zf-rpc' => [
+            'api-tools-rpc' => [
                 'Controller\Foo' => [
                     'callable' => 'Foo::bar',
                 ],
@@ -54,7 +56,7 @@ class RpcControllerFactoryTest extends TestCase
             'Controller\Foo'
         );
 
-        $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
+        $this->assertInstanceOf('Laminas\ApiTools\Rpc\RpcController', $controller);
         $this->assertAttributeSame([$foo->reveal(), 'bar'], 'wrappedCallable', $controller);
     }
 
@@ -64,7 +66,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testWillPullNonCallableStaticCallableFromServiceManagerIfServiceIsPresent()
     {
         $config = [
-            'zf-rpc' => [
+            'api-tools-rpc' => [
                 'Controller\Foo' => [
                     'callable' => 'Foo::bar',
                 ],
@@ -92,7 +94,7 @@ class RpcControllerFactoryTest extends TestCase
             'Controller\Foo'
         );
 
-        $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
+        $this->assertInstanceOf('Laminas\ApiTools\Rpc\RpcController', $controller);
         $this->assertAttributeSame([$foo->reveal(), 'bar'], 'wrappedCallable', $controller);
     }
 
@@ -102,17 +104,17 @@ class RpcControllerFactoryTest extends TestCase
     public function testWillInstantiateCallableClassIfClassExists()
     {
         $config = [
-            'zf-rpc' => [
+            'api-tools-rpc' => [
                 'Controller\Foo' => [
-                    'callable' => 'ZFTest\Rpc\Factory\TestAsset\Foo::bar',
+                    'callable' => 'LaminasTest\ApiTools\Rpc\Factory\TestAsset\Foo::bar',
                 ],
             ],
         ];
         $this->services->has('Config')->willReturn(true);
         $this->services->get('Config')->willReturn($config);
 
-        $this->controllers->has('ZFTest\Rpc\Factory\TestAsset\Foo')->willReturn(false);
-        $this->services->has('ZFTest\Rpc\Factory\TestAsset\Foo')->willReturn(false);
+        $this->controllers->has('LaminasTest\ApiTools\Rpc\Factory\TestAsset\Foo')->willReturn(false);
+        $this->services->has('LaminasTest\ApiTools\Rpc\Factory\TestAsset\Foo')->willReturn(false);
 
         $controllers = $this->controllers->reveal();
 
@@ -127,7 +129,7 @@ class RpcControllerFactoryTest extends TestCase
             'Controller\Foo'
         );
 
-        $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
+        $this->assertInstanceOf('Laminas\ApiTools\Rpc\RpcController', $controller);
 
         $r = new ReflectionProperty($controller, 'wrappedCallable');
         $r->setAccessible(true);
@@ -161,7 +163,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigDoesNotContainServiceName()
     {
         $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(['zf-rpc' => []]);
+        $this->services->get('Config')->willReturn(['api-tools-rpc' => []]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -172,7 +174,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigForControllerIsNotArray()
     {
         $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(['zf-rpc' => [
+        $this->services->get('Config')->willReturn(['api-tools-rpc' => [
             'Controller\Foo' => true,
         ]]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
@@ -185,7 +187,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigForControllerDoesNotContainCallableKey()
     {
         $this->services->has('Config')->willReturn(true);
-        $this->services->get('Config')->willReturn(['zf-rpc' => [
+        $this->services->get('Config')->willReturn(['api-tools-rpc' => [
             'Controller\Foo' => [],
         ]]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
@@ -213,7 +215,7 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testServiceCreationFailsForInvalidCallable($callable)
     {
-        $this->services->get('Config')->willReturn(['zf-rpc' => [
+        $this->services->get('Config')->willReturn(['api-tools-rpc' => [
             'Controller\Foo' => [
                 'callable' => $callable,
             ],
@@ -243,7 +245,7 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testServiceCreationReturnsRpcControllerWrappingCallableForValidCallbacks($callable)
     {
-        $this->services->get('Config')->willReturn(['zf-rpc' => [
+        $this->services->get('Config')->willReturn(['api-tools-rpc' => [
             'Controller\Foo' => [
                 'callable' => $callable,
             ],
@@ -254,7 +256,7 @@ class RpcControllerFactoryTest extends TestCase
             'Controller\Foo'
         );
 
-        $this->assertInstanceOf('ZF\Rpc\RpcController', $controller);
+        $this->assertInstanceOf('Laminas\ApiTools\Rpc\RpcController', $controller);
         $this->assertAttributeSame($callable, 'wrappedCallable', $controller);
     }
 }
