@@ -1,45 +1,21 @@
 {
-    "name": "zfcampus/zf-rpc",
-    "description": "ZF2 Module for simplifying the creation of RPC services",
+    "name": "laminas-api-tools/api-tools-rpc",
+    "description": "Laminas Module for simplifying the creation of RPC services",
     "license": "BSD-3-Clause",
     "keywords": [
-        "zendframework",
-        "zf",
-        "zend",
+        "laminas",
+        "api-tools",
         "module",
         "rpc"
     ],
+    "homepage": "https://api-tools.getlaminas.org",
     "support": {
-        "issues": "https://github.com/zfcampus/zf-rpc/issues",
-        "source": "https://github.com/zfcampus/zf-rpc",
-        "rss": "https://github.com/zfcampus/zf-rpc/releases.atom",
-        "chat": "https://zendframework-slack.herokuapp.com",
-        "forum": "https://discourse.zendframework.com/c/questions/apigility"
-    },
-    "require": {
-        "php": "^5.6 || ^7.0",
-        "zendframework/zend-eventmanager": "^2.6.3 || ^3.0.1",
-        "zendframework/zend-http": "^2.5.4",
-        "zendframework/zend-mvc": "^2.7.15 || ^3.0.2",
-        "zendframework/zend-servicemanager": "^2.7.6 || ^3.1",
-        "zendframework/zend-stdlib": "^2.7.7 || ^3.0.1",
-        "zendframework/zend-view": "^2.8.1",
-        "zfcampus/zf-api-problem": "^1.2.1",
-        "zfcampus/zf-content-negotiation": "^1.2.1"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.5",
-        "zendframework/zend-coding-standard": "~1.0.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "ZF\\Rpc\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "ZFTest\\Rpc\\": "test/"
-        }
+        "docs": "https://api-tools.getlaminas.org/documentation",
+        "issues": "https://github.com/laminas-api-tools/api-tools-rpc/issues",
+        "source": "https://github.com/laminas-api-tools/api-tools-rpc",
+        "rss": "https://github.com/laminas-api-tools/api-tools-rpc/releases.atom",
+        "chat": "https://laminas.dev/chat",
+        "forum": "https://discourse.laminas.dev"
     },
     "config": {
         "sort-packages": true
@@ -49,8 +25,34 @@
             "dev-master": "1.4.x-dev",
             "dev-develop": "1.5.x-dev"
         },
-        "zf": {
-            "module": "ZF\\Rpc"
+        "laminas": {
+            "module": "Laminas\\ApiTools\\Rpc"
+        }
+    },
+    "require": {
+        "php": "^5.6 || ^7.0",
+        "laminas-api-tools/api-tools-api-problem": "^1.2.1",
+        "laminas-api-tools/api-tools-content-negotiation": "^1.2.1",
+        "laminas/laminas-eventmanager": "^2.6.3 || ^3.0.1",
+        "laminas/laminas-http": "^2.5.4",
+        "laminas/laminas-mvc": "^2.7.15 || ^3.0.2",
+        "laminas/laminas-servicemanager": "^2.7.6 || ^3.1",
+        "laminas/laminas-stdlib": "^2.7.7 || ^3.0.1",
+        "laminas/laminas-view": "^2.8.1",
+        "laminas/laminas-zendframework-bridge": "^1.0"
+    },
+    "require-dev": {
+        "laminas/laminas-coding-standard": "~1.0.0",
+        "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laminas\\ApiTools\\Rpc\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LaminasTest\\ApiTools\\Rpc\\": "test/"
         }
     },
     "scripts": {
@@ -63,5 +65,7 @@
         "test": "phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     },
-    "homepage": "http://apigility.org/"
+    "replace": {
+        "zfcampus/zf-rpc": "self.version"
+    }
 }
