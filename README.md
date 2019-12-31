@@ -1,7 +1,7 @@
 RPC
 ===
 
-Module for implementing RPC web services in ZF2.
+Module for implementing RPC web services in Laminas.
 
 Enables:
 
