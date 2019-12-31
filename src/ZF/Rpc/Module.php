@@ -1,17 +1,19 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZF\Rpc;
+namespace Laminas\ApiTools\Rpc;
 
 class Module
 {
     public function getAutoloaderConfig()
     {
         return array(
-            'Zend\Loader\StandardAutoloader' => array(
+            'Laminas\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__,
                 ),
@@ -32,12 +34,12 @@ class Module
     public function getServiceConfig()
     {
         return array('factories' => array(
-            'ZF\Rpc\OptionsListener' => function ($services) {
+            'Laminas\ApiTools\Rpc\OptionsListener' => function ($services) {
                 $rpcConfig = array();
                 if ($services->has('Config')) {
                     $config = $services->get('Config');
-                    if (isset($config['zf-rpc'])) {
-                        $rpcConfig = $config['zf-rpc'];
+                    if (isset($config['api-tools-rpc'])) {
+                        $rpcConfig = $config['api-tools-rpc'];
                     }
                 }
                 return new OptionsListener($rpcConfig);
@@ -51,7 +53,7 @@ class Module
         $services = $app->getServiceManager();
 
         // Attach OptionsListener
-        $optionsListener = $services->get('ZF\Rpc\OptionsListener');
+        $optionsListener = $services->get('Laminas\ApiTools\Rpc\OptionsListener');
         $optionsListener->attach($app->getEventManager());
 
         // Setup json strategy
