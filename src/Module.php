@@ -1,10 +1,12 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2014-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZF\Rpc;
+namespace Laminas\ApiTools\Rpc;
 
 class Module
 {
@@ -23,7 +25,7 @@ class Module
      *
      * Attaches the OptionsListener and the JSON view strategy.
      *
-     * @param \Zend\Mvc\MvcEvent $e
+     * @param \Laminas\Mvc\MvcEvent $e
      * @return void
      */
     public function onBootstrap($e)

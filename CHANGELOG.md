@@ -6,13 +6,13 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- [#10](https://github.com/zfcampus/zf-rpc/pull/10) adds support for v3 releases
-  of Zend Framework components, while retaining compatibility with v2 releases.
-- [#10](https://github.com/zfcampus/zf-rpc/pull/10) adds
-  `ZF\Rpc\Factory\OptionsListenerFactory`, which was extracted from the `Module`
+- [zfcampus/zf-rpc#10](https://github.com/zfcampus/zf-rpc/pull/10) adds support for v3 releases
+  of Laminas components, while retaining compatibility with v2 releases.
+- [zfcampus/zf-rpc#10](https://github.com/zfcampus/zf-rpc/pull/10) adds
+  `Laminas\ApiTools\Rpc\Factory\OptionsListenerFactory`, which was extracted from the `Module`
   class.
-- [#10](https://github.com/zfcampus/zf-rpc/pull/10) exposes the module to
-  zend-component-installer.
+- [zfcampus/zf-rpc#10](https://github.com/zfcampus/zf-rpc/pull/10) exposes the module to
+  laminas-component-installer.
 
 ### Deprecated
 
@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- [#10](https://github.com/zfcampus/zf-rpc/pull/10) removes support for PHP 5.5.
+- [zfcampus/zf-rpc#10](https://github.com/zfcampus/zf-rpc/pull/10) removes support for PHP 5.5.
 
 ### Fixed
 

@@ -1,13 +1,15 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZF\Rpc\Factory;
+namespace Laminas\ApiTools\Rpc\Factory;
 
 use Interop\Container\ContainerInterface;
-use ZF\Rpc\OptionsListener;
+use Laminas\ApiTools\Rpc\OptionsListener;
 
 class OptionsListenerFactory
 {
@@ -33,10 +35,10 @@ class OptionsListenerFactory
         }
 
         $config = $container->get('config');
-        if (! isset($config['zf-rpc'])) {
+        if (! isset($config['api-tools-rpc'])) {
             return [];
         }
 
-        return $config['zf-rpc'];
+        return $config['api-tools-rpc'];
     }
 }
