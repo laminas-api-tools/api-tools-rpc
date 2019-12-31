@@ -1,26 +1,28 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZFTest\Rpc\Factory;
+namespace LaminasTest\ApiTools\Rpc\Factory;
 
 use Interop\Container\ContainerInterface;
+use Laminas\ApiTools\Rpc\Factory\RpcControllerFactory;
+use Laminas\ApiTools\Rpc\RpcController;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\Mvc\Controller\ControllerManager;
+use Laminas\Mvc\Controller\PluginManager;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Mvc\Router\RouteMatch as LegacyRouteMatch;
+use Laminas\Router\RouteMatch;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ProphecyInterface;
 use ReflectionProperty;
-use Zend\EventManager\EventManagerInterface;
-use Zend\Mvc\Controller\ControllerManager;
-use Zend\Mvc\Controller\PluginManager;
-use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch as LegacyRouteMatch;
-use Zend\Router\RouteMatch;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use ZF\Rpc\Factory\RpcControllerFactory;
-use ZF\Rpc\RpcController;
 
 class RpcControllerFactoryTest extends TestCase
 {
@@ -59,7 +61,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testWillPullNonCallableStaticCallableFromControllerManagerIfServiceIsPresent()
     {
         $config = [
-            'zf-rpc' => [
+            'api-tools-rpc' => [
                 'Controller\Foo' => [
                     'callable' => 'Foo::bar',
                 ],
@@ -95,7 +97,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testWillPullNonCallableStaticCallableFromServiceManagerIfServiceIsPresent()
     {
         $config = [
-            'zf-rpc' => [
+            'api-tools-rpc' => [
                 'Controller\Foo' => [
                     'callable' => 'Foo::bar',
                 ],
@@ -133,7 +135,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testWillInstantiateCallableClassIfClassExists()
     {
         $config = [
-            'zf-rpc' => [
+            'api-tools-rpc' => [
                 'Controller\Foo' => [
                     'callable' => TestAsset\Foo::class . '::bar',
                 ],
@@ -143,7 +145,11 @@ class RpcControllerFactoryTest extends TestCase
         $this->services->get('config')->willReturn($config);
 
         $this->controllers->has(TestAsset\Foo::class)->willReturn(false);
+
+        $this->controllers->has(\ZFTest\Rpc\Factory\TestAsset\Foo::class)->willReturn(false);
         $this->services->has(TestAsset\Foo::class)->willReturn(false);
+
+        $this->services->has(\ZFTest\Rpc\Factory\TestAsset\Foo::class)->willReturn(false);
 
         $controllers = $this->controllers->reveal();
 
@@ -192,7 +198,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigDoesNotContainServiceName()
     {
         $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn(['zf-rpc' => []]);
+        $this->services->get('config')->willReturn(['api-tools-rpc' => []]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
             $this->controllers->reveal(),
             'Controller\Foo',
@@ -203,7 +209,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigForControllerIsNotArray()
     {
         $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn(['zf-rpc' => [
+        $this->services->get('config')->willReturn(['api-tools-rpc' => [
             'Controller\Foo' => true,
         ]]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
@@ -216,7 +222,7 @@ class RpcControllerFactoryTest extends TestCase
     public function testReportsCannotCreateServiceIfRpcConfigForControllerDoesNotContainCallableKey()
     {
         $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn(['zf-rpc' => [
+        $this->services->get('config')->willReturn(['api-tools-rpc' => [
             'Controller\Foo' => [],
         ]]);
         $this->assertFalse($this->factory->canCreateServiceWithName(
@@ -246,7 +252,7 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testServiceCreationFailsForInvalidCallable($callable)
     {
-        $this->services->get('config')->willReturn(['zf-rpc' => [
+        $this->services->get('config')->willReturn(['api-tools-rpc' => [
             'Controller\Foo' => [
                 'callable' => $callable,
             ],
@@ -279,7 +285,7 @@ class RpcControllerFactoryTest extends TestCase
      */
     public function testServiceCreationReturnsRpcControllerWrappingCallableForValidCallbacks($callable)
     {
-        $this->services->get('config')->willReturn(['zf-rpc' => [
+        $this->services->get('config')->willReturn(['api-tools-rpc' => [
             'Controller\Foo' => [
                 'callable' => $callable,
             ],
@@ -306,7 +312,7 @@ class RpcControllerFactoryTest extends TestCase
                     RpcControllerFactory::class,
                 ],
             ],
-            'zf-rpc' => [
+            'api-tools-rpc' => [
                 TestAsset\Foo::class => [
                     'callable' => TestAsset\Foo::class . '::bar',
                 ],
@@ -317,6 +323,8 @@ class RpcControllerFactoryTest extends TestCase
         $this->services->get('config')->willReturn($config);
 
         $this->services->has(TestAsset\Foo::class)->willReturn(false);
+
+        $this->services->has(\ZFTest\Rpc\Factory\TestAsset\Foo::class)->willReturn(false);
 
         $this->services->get('EventManager')->willReturn($this->prophesize(EventManagerInterface::class)->reveal());
         $this->services->get('ControllerPluginManager')->willReturn($this->prophesize(PluginManager::class)->reveal());
@@ -339,9 +347,9 @@ class RpcControllerFactoryTest extends TestCase
         // The lines below verify that the callable is correctly called when decorated in an RpcController
         $event = $this->prophesize(MvcEvent::class);
         $routeMatch = $this->prophesize($this->getRouteMatchClass());
-        $event->getParam('ZFContentNegotiationParameterData')->shouldBeCalled()->willReturn(false);
+        $event->getParam('LaminasContentNegotiationParameterData')->shouldBeCalled()->willReturn(false);
         $event->getRouteMatch()->shouldBeCalled()->willReturn($routeMatch->reveal());
-        $event->setParam('ZFContentNegotiationFallback', Argument::type('array'))->shouldBeCalled();
+        $event->setParam('LaminasContentNegotiationFallback', Argument::type('array'))->shouldBeCalled();
         $event->setResult(null)->shouldBeCalled();
 
         $controller->onDispatch($event->reveal());
@@ -350,10 +358,10 @@ class RpcControllerFactoryTest extends TestCase
     /**
      * Retrieve the currently expected RouteMatch class.
      *
-     * Essentially, these vary between versions 2 and 3 of zend-mvc, with the
-     * latter using the class provided in zend-router.
+     * Essentially, these vary between versions 2 and 3 of laminas-mvc, with the
+     * latter using the class provided in laminas-router.
      *
-     * We can remove this once we drop support for ZF2.
+     * We can remove this once we drop support for Laminas.
      *
      * @return string
      */
