@@ -1,11 +1,13 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
 return array(
-    'zf-rpc' => array(
+    'api-tools-rpc' => array(
         // Array of Controller service name / configuration
         //
         // Configuration should include:
@@ -14,8 +16,8 @@ return array(
         //
         // Configuration may include:
         // - callable: the PHP callable to invoke; only necessary if not
-        //   using a standard ZF2 Zend\Stdlib\DispatchableInterface or
-        //   Zend\Mvc\Controller implementation.
+        //   using a standard Laminas Laminas\Stdlib\DispatchableInterface or
+        //   Laminas\Mvc\Controller implementation.
         //
         // Example:
         //
@@ -27,7 +29,7 @@ return array(
     ),
     'controllers' => array(
         'abstract_factories' => array(
-            'ZF\Rpc\Factory\RpcControllerFactory',
+            'Laminas\ApiTools\Rpc\Factory\RpcControllerFactory',
         ),
     ),
 );
