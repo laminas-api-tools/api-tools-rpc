@@ -1,24 +1,25 @@
 {
-    "name": "zfcampus/zf-rpc",
-    "description": "ZF2 Module for simplifying the creation of RPC services",
-    "type": "library",
+    "name": "laminas-api-tools/api-tools-rpc",
+    "description": "Laminas Module for simplifying the creation of RPC services",
     "license": "BSD-3-Clause",
     "keywords": [
-        "zf2",
-        "zend",
+        "laminas",
+        "api-tools",
         "module",
         "rpc"
     ],
-    "homepage": "http://apigility.org/",
+    "homepage": "https://api-tools.getlaminas.org",
     "support": {
-        "email": "apigility-users@zend.com",
-        "irc": "irc://irc.freenode.net/apigility",
-        "source": "https://github.com/zfcampus/zf-rpc",
-        "issues": "https://github.com/zfcampus/zf-rpc/issues"
+        "docs": "https://api-tools.getlaminas.org/documentation",
+        "issues": "https://github.com/laminas-api-tools/api-tools-rpc/issues",
+        "source": "https://github.com/laminas-api-tools/api-tools-rpc",
+        "rss": "https://github.com/laminas-api-tools/api-tools-rpc/releases.atom",
+        "chat": "https://laminas.dev/chat",
+        "forum": "https://discourse.laminas.dev"
     },
-    "repositories": [
-        { "type": "composer", "url": "https://packages.zendframework.com" }
-    ],
+    "config": {
+        "sort-packages": true
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.0-dev"
@@ -26,16 +27,20 @@
     },
     "require": {
         "php": ">=5.4.8",
-        "zfcampus/zf-api-problem": "~1.0-dev",
-        "zfcampus/zf-content-negotiation": "~1.0-dev",
-        "zendframework/zendframework": "~2.3-dev"
+        "laminas-api-tools/api-tools-api-problem": "~1.0-dev",
+        "laminas-api-tools/api-tools-content-negotiation": "~1.0-dev",
+        "laminas/laminas": "~2.3-dev",
+        "laminas/laminas-zendframework-bridge": "^1.0"
     },
     "autoload": {
         "psr-0": {
-            "ZF\\Rpc\\": "src/"
+            "Laminas\\ApiTools\\Rpc\\": "src/"
         },
         "classmap": [
             "Module.php"
         ]
+    },
+    "replace": {
+        "zfcampus/zf-rpc": "self.version"
     }
 }

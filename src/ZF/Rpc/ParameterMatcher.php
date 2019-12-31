@@ -1,12 +1,14 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZF\Rpc;
+namespace Laminas\ApiTools\Rpc;
 
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 
 class ParameterMatcher
 {
@@ -44,28 +46,28 @@ class ParameterMatcher
             $normalMethodParamName = str_replace(array('-', '_'), '', strtolower($paramName));
             if ($reflectionTypehint = $reflMethodParam->getClass()) {
                 $typehint = $reflectionTypehint->getName();
-                if ($typehint == 'Zend\Http\PhpEnvironment\Request'
-                    || $typehint == 'Zend\Http\Request'
-                    || $typehint == 'Zend\Stdlib\RequestInterface'
-                    || $this->isSubclassOf($typehint, 'Zend\Stdlib\RequestInterface')) {
+                if ($typehint == 'Laminas\Http\PhpEnvironment\Request'
+                    || $typehint == 'Laminas\Http\Request'
+                    || $typehint == 'Laminas\Stdlib\RequestInterface'
+                    || $this->isSubclassOf($typehint, 'Laminas\Stdlib\RequestInterface')) {
                     $dispatchParams[] = $this->mvcEvent->getRequest();
                     continue;
                 }
-                if ($typehint == 'Zend\Http\PhpEnvironment\Response'
-                    || $typehint == 'Zend\Http\Response'
-                    || $typehint == 'Zend\Stdlib\ResponseInterface'
-                    || $this->isSubclassOf($typehint, 'Zend\Stdlib\ResponseInterface')) {
+                if ($typehint == 'Laminas\Http\PhpEnvironment\Response'
+                    || $typehint == 'Laminas\Http\Response'
+                    || $typehint == 'Laminas\Stdlib\ResponseInterface'
+                    || $this->isSubclassOf($typehint, 'Laminas\Stdlib\ResponseInterface')) {
                     $dispatchParams[] = $this->mvcEvent->getResponse();
                     continue;
                 }
-                if ($typehint == 'Zend\Mvc\ApplicationInterface'
-                    || $typehint == 'Zend\Mvc\Application'
-                    || $this->isSubclassOf($typehint, 'Zend\Mvc\ApplicationInterface')) {
+                if ($typehint == 'Laminas\Mvc\ApplicationInterface'
+                    || $typehint == 'Laminas\Mvc\Application'
+                    || $this->isSubclassOf($typehint, 'Laminas\Mvc\ApplicationInterface')) {
                     $dispatchParams[] = $this->mvcEvent->getApplication();
                     continue;
                 }
-                if ($typehint == 'Zend\Mvc\MvcEvent'
-                    || $this->isSubclassOf($typehint, 'Zend\Mvc\MvcEvent')) {
+                if ($typehint == 'Laminas\Mvc\MvcEvent'
+                    || $this->isSubclassOf($typehint, 'Laminas\Mvc\MvcEvent')) {
                     $dispatchParams[] = $this->mvcEvent;
                     continue;
                 }

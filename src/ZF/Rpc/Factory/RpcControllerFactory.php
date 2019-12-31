@@ -1,15 +1,17 @@
 <?php
+
 /**
- * @license   http://opensource.org/licenses/BSD-3-Clause BSD-3-Clause
- * @copyright Copyright (c) 2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
+ * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
+ * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZF\Rpc\Factory;
+namespace Laminas\ApiTools\Rpc\Factory;
 
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Stdlib\DispatchableInterface;
-use ZF\Rpc\RpcController;
+use Laminas\ApiTools\Rpc\RpcController;
+use Laminas\ServiceManager\AbstractFactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Stdlib\DispatchableInterface;
 
 class RpcControllerFactory implements AbstractFactoryInterface
 {
@@ -30,13 +32,13 @@ class RpcControllerFactory implements AbstractFactoryInterface
         }
 
         $config = $serviceLocator->get('Config');
-        if (!isset($config['zf-rpc']) 
-            || !isset($config['zf-rpc'][$requestedName])
+        if (!isset($config['api-tools-rpc']) 
+            || !isset($config['api-tools-rpc'][$requestedName])
         ) {
             return false;
         }
 
-        $config = $config['zf-rpc'][$requestedName];
+        $config = $config['api-tools-rpc'][$requestedName];
 
         if (!is_array($config)
             || !isset($config['callable'])
@@ -58,10 +60,10 @@ class RpcControllerFactory implements AbstractFactoryInterface
     {
         $serviceLocator = $controllerManager->getServiceLocator();
         $config         = $serviceLocator->get('Config');
-        $callable       = $config['zf-rpc'][$requestedName]['callable'];
+        $callable       = $config['api-tools-rpc'][$requestedName]['callable'];
 
         if (!is_string($callable) && !is_callable($callable)) {
-            throw new \Exception('Unable to create a controller from the configured zf-rpc callable');
+            throw new \Exception('Unable to create a controller from the configured api-tools-rpc callable');
         }
 
         if (is_string($callable)
