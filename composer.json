@@ -66,6 +66,6 @@
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     },
     "replace": {
-        "zfcampus/zf-rpc": "self.version"
+        "zfcampus/zf-rpc": "^1.4.2"
     }
 }
