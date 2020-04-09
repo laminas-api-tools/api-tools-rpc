@@ -89,7 +89,9 @@ class RpcControllerFactory implements AbstractFactoryInterface
         $callable = $config['api-tools-rpc'][$requestedName]['callable'];
 
         if (! is_string($callable) && ! is_callable($callable)) {
-            throw new ServiceNotCreatedException('Unable to create a controller from the configured api-tools-rpc callable');
+            throw new ServiceNotCreatedException(
+                'Unable to create a controller from the configured api-tools-rpc callable'
+            );
         }
 
         if (is_string($callable)
