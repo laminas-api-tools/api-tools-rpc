@@ -9,14 +9,28 @@
 namespace Laminas\ApiTools\Rpc;
 
 use Closure;
+use Exception;
 use Laminas\Mvc\Controller\AbstractActionController as BaseAbstractActionController;
 use Laminas\Mvc\MvcEvent;
-use Laminas\View\Model;
+use Laminas\View\Model\JsonModel;
+
+use function call_user_func_array;
+use function is_array;
+use function is_callable;
+use function is_object;
+use function lcfirst;
+use function method_exists;
+use function str_replace;
+use function ucwords;
 
 class RpcController extends BaseAbstractActionController
 {
+    /** @var callable */
     protected $wrappedCallable;
 
+    /**
+     * @param callable $wrappedCallable
+     */
     public function setWrappedCallable($wrappedCallable)
     {
         $this->wrappedCallable = $wrappedCallable;
@@ -40,10 +54,10 @@ class RpcController extends BaseAbstractActionController
             $callable = $this->wrappedCallable;
         } elseif (is_array($this->wrappedCallable) && is_callable($this->wrappedCallable)) {
             $callable = $this->wrappedCallable;
-        } elseif (is_object($this->wrappedCallable) || is_null($this->wrappedCallable)) {
-            $action = $routeMatch->getParam('action', 'not-found');
-            $method = static::getMethodFromAction($action);
-            $callable = (is_null($this->wrappedCallable) && get_class($this) !== __CLASS__)
+        } elseif (is_object($this->wrappedCallable) || null === $this->wrappedCallable) {
+            $action   = $routeMatch->getParam('action', 'not-found');
+            $method   = static::getMethodFromAction($action);
+            $callable = null === $this->wrappedCallable && static::class !== self::class
                 ? $this
                 : $this->wrappedCallable;
             if (! method_exists($callable, $method)) {
@@ -51,13 +65,13 @@ class RpcController extends BaseAbstractActionController
             }
             $callable = [$callable, $method];
         } else {
-            throw new \Exception('RPC Controller Not Understood');
+            throw new Exception('RPC Controller Not Understood');
         }
 
         $dispatchParameters = $parameterMatcher->getMatchedParameters($callable, $routeParameters ?: []);
-        $result = call_user_func_array($callable, $dispatchParameters);
+        $result             = call_user_func_array($callable, $dispatchParameters);
 
-        $e->setParam('LaminasContentNegotiationFallback', ['Laminas\View\Model\JsonModel' => ['application/json']]);
+        $e->setParam('LaminasContentNegotiationFallback', [JsonModel::class => ['application/json']]);
         $e->setResult($result);
     }
 
@@ -69,10 +83,10 @@ class RpcController extends BaseAbstractActionController
      */
     public static function getMethodFromAction($action)
     {
-        $method  = str_replace(['.', '-', '_'], ' ', $action);
-        $method  = ucwords($method);
-        $method  = str_replace(' ', '', $method);
-        $method  = lcfirst($method);
+        $method = str_replace(['.', '-', '_'], ' ', $action);
+        $method = ucwords($method);
+        $method = str_replace(' ', '', $method);
+        $method = lcfirst($method);
 
         return $method;
     }

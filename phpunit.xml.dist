@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="./vendor/autoload.php" colors="true">
-    <testsuites>
-        <testsuite name="LaminasRpc Module Tests">
-            <directory>./test</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory>./src</directory>
-        </whitelist>
-    </filter>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         bootstrap="./vendor/autoload.php"
+         colors="true"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd">
+  <coverage includeUncoveredFiles="true">
+    <include>
+      <directory>./src</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="LaminasRpc Module Tests">
+      <directory>./test</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>

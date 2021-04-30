@@ -8,6 +8,8 @@
 
 namespace Laminas\ApiTools\Rpc;
 
+use Laminas\Mvc\MvcEvent;
+
 class Module
 {
     /**
@@ -25,7 +27,7 @@ class Module
      *
      * Attaches the OptionsListener and the JSON view strategy.
      *
-     * @param \Laminas\Mvc\MvcEvent $e
+     * @param MvcEvent $e
      * @return void
      */
     public function onBootstrap($e)

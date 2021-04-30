@@ -14,7 +14,6 @@ use Laminas\ApiTools\Rpc\OptionsListener;
 class OptionsListenerFactory
 {
     /**
-     * @param ContainerInterface $container
      * @return OptionsListener
      */
     public function __invoke(ContainerInterface $container)
@@ -25,7 +24,6 @@ class OptionsListenerFactory
     /**
      * Attempt to marshal configuration from the "config" service.
      *
-     * @param ContainerInterface $container
      * @return array
      */
     private function getConfig(ContainerInterface $container)
