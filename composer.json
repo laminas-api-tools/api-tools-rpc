@@ -1,7 +1,6 @@
 {
     "name": "laminas-api-tools/api-tools-rpc",
     "description": "Laminas Module for simplifying the creation of RPC services",
-    "license": "BSD-3-Clause",
     "keywords": [
         "laminas",
         "api-tools",
@@ -9,22 +8,7 @@
         "rpc"
     ],
     "homepage": "https://api-tools.getlaminas.org",
-    "support": {
-        "docs": "https://api-tools.getlaminas.org/documentation",
-        "issues": "https://github.com/laminas-api-tools/api-tools-rpc/issues",
-        "source": "https://github.com/laminas-api-tools/api-tools-rpc",
-        "rss": "https://github.com/laminas-api-tools/api-tools-rpc/releases.atom",
-        "chat": "https://laminas.dev/chat",
-        "forum": "https://discourse.laminas.dev"
-    },
-    "config": {
-        "sort-packages": true
-    },
-    "extra": {
-        "laminas": {
-            "module": "Laminas\\ApiTools\\Rpc"
-        }
-    },
+    "license": "BSD-3-Clause",
     "require": {
         "php": "^5.6 || ^7.0",
         "laminas-api-tools/api-tools-api-problem": "^1.2.1",
@@ -37,9 +21,20 @@
         "laminas/laminas-view": "^2.8.1",
         "laminas/laminas-zendframework-bridge": "^1.0"
     },
+    "replace": {
+        "zfcampus/zf-rpc": "^1.4.2"
+    },
     "require-dev": {
         "laminas/laminas-coding-standard": "~1.0.0",
         "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.5"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laminas": {
+            "module": "Laminas\\ApiTools\\Rpc"
+        }
     },
     "autoload": {
         "psr-4": {
@@ -61,7 +56,12 @@
         "test": "phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     },
-    "replace": {
-        "zfcampus/zf-rpc": "^1.4.2"
+    "support": {
+        "issues": "https://github.com/laminas-api-tools/api-tools-rpc/issues",
+        "forum": "https://discourse.laminas.dev",
+        "chat": "https://laminas.dev/chat",
+        "source": "https://github.com/laminas-api-tools/api-tools-rpc",
+        "docs": "https://api-tools.getlaminas.org/documentation",
+        "rss": "https://github.com/laminas-api-tools/api-tools-rpc/releases.atom"
     }
 }
