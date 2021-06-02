@@ -29,5 +29,7 @@ jobs:
     steps:
       - name: ${{ matrix.name }}
         uses: laminas/laminas-continuous-integration-action@v1
+        env:
+          "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
         with:
           job: ${{ matrix.job }}
