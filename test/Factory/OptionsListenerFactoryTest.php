@@ -7,55 +7,52 @@ namespace LaminasTest\ApiTools\Rpc\Factory;
 use Interop\Container\ContainerInterface;
 use Laminas\ApiTools\Rpc\Factory\OptionsListenerFactory;
 use Laminas\ApiTools\Rpc\OptionsListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ProphecyInterface;
 use ReflectionClass;
 
 class OptionsListenerFactoryTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /** @var ContainerInterface|ProphecyInterface */
+    /** @var ContainerInterface&MockObject */
     private $container;
 
     public function setUp(): void
     {
-        $this->container = $this->prophesize(ContainerInterface::class);
+        $this->container = $this->createMock(ContainerInterface::class);
     }
 
-    public function testWillCreateOptionsListenerWithEmptyConfigWhenConfigServiceIsNotPresent()
+    public function testWillCreateOptionsListenerWithEmptyConfigWhenConfigServiceIsNotPresent(): void
     {
-        $this->container->has('config')->willReturn(false);
+        $this->container->method('has')->with('config')->willReturn(false);
         $factory = new OptionsListenerFactory();
 
-        $listener = $factory($this->container->reveal());
+        $listener = $factory($this->container);
         $this->assertInstanceOf(OptionsListener::class, $listener);
         self::assertListenerConfig([], $listener);
     }
 
-    public function testWillCreateOptionsListenerWithEmptyConfigWhenNoRpcConfigPresent()
+    public function testWillCreateOptionsListenerWithEmptyConfigWhenNoRpcConfigPresent(): void
     {
-        $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn(['foo' => 'bar']);
+        $this->container->method('has')->with('config')->willReturn(true);
+        $this->container->method('get')->with('config')->willReturn(['foo' => 'bar']);
         $factory = new OptionsListenerFactory();
 
-        $listener = $factory($this->container->reveal());
+        $listener = $factory($this->container);
         $this->assertInstanceOf(OptionsListener::class, $listener);
         self::assertListenerConfig([], $listener);
     }
 
-    public function testWillCreateOptionsListenerWithRpcConfigWhenPresent()
+    public function testWillCreateOptionsListenerWithRpcConfigWhenPresent(): void
     {
-        $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn([
+        $this->container->method('has')->with('config')->willReturn(true);
+        $this->container->method('get')->with('config')->willReturn([
             'api-tools-rpc' => [
                 'foo' => 'bar',
             ],
         ]);
         $factory = new OptionsListenerFactory();
 
-        $listener = $factory($this->container->reveal());
+        $listener = $factory($this->container);
         $this->assertInstanceOf(OptionsListener::class, $listener);
         self::assertListenerConfig(['foo' => 'bar'], $listener);
     }

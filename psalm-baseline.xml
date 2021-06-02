@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.7.3@38c452ae584467e939d55377aaf83b5a26f19dd1">
+  <file src="src/Factory/OptionsListenerFactory.php">
+    <MixedArrayAccess occurrences="1">
+      <code>$config['api-tools-rpc']</code>
+    </MixedArrayAccess>
+    <MixedAssignment occurrences="1">
+      <code>$config</code>
+    </MixedAssignment>
+    <MixedInferredReturnType occurrences="1">
+      <code>array</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement occurrences="1">
+      <code>$config['api-tools-rpc']</code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Factory/RpcControllerFactory.php">
+    <DeprecatedInterface occurrences="1">
+      <code>RpcControllerFactory</code>
+    </DeprecatedInterface>
+    <MixedArgument occurrences="4">
+      <code>$container</code>
+      <code>$container</code>
+      <code>$container-&gt;get('ControllerManager')</code>
+      <code>$string</code>
+    </MixedArgument>
+    <MixedArrayAccess occurrences="2">
+      <code>$config['api-tools-rpc']</code>
+      <code>$config['api-tools-rpc']</code>
+    </MixedArrayAccess>
+    <MixedAssignment occurrences="5">
+      <code>$config</code>
+      <code>$config</code>
+      <code>$config</code>
+      <code>$container</code>
+      <code>$container</code>
+    </MixedAssignment>
+    <MixedMethodCall occurrences="1">
+      <code>new $class()</code>
+    </MixedMethodCall>
+    <ParamNameMismatch occurrences="2">
+      <code>$controllerManager</code>
+      <code>$controllerManager</code>
+    </ParamNameMismatch>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$callable</code>
+    </PossiblyInvalidArgument>
+    <UndefinedInterfaceMethod occurrences="2">
+      <code>getServiceLocator</code>
+      <code>getServiceLocator</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/Module.php">
+    <MixedAssignment occurrences="3">
+      <code>$optionsListener</code>
+      <code>$strategy</code>
+      <code>$view</code>
+    </MixedAssignment>
+    <MixedInferredReturnType occurrences="1">
+      <code>array</code>
+    </MixedInferredReturnType>
+    <MixedMethodCall occurrences="4">
+      <code>attach</code>
+      <code>attach</code>
+      <code>getEventManager</code>
+      <code>getView</code>
+    </MixedMethodCall>
+    <MixedReturnStatement occurrences="1">
+      <code>include __DIR__ . '/../config/module.config.php'</code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/OptionsListener.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$response</code>
+    </ArgumentTypeCoercion>
+    <LessSpecificReturnStatement occurrences="1">
+      <code>$response</code>
+    </LessSpecificReturnStatement>
+    <MissingClosureParamType occurrences="1">
+      <code>$value</code>
+    </MissingClosureParamType>
+    <MixedArgument occurrences="4">
+      <code>$config</code>
+      <code>$config['http_methods']</code>
+      <code>$controller</code>
+      <code>$value</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="2">
+      <code>$config</code>
+      <code>$controller</code>
+    </MixedAssignment>
+    <MoreSpecificReturnType occurrences="1">
+      <code>Response</code>
+    </MoreSpecificReturnType>
+    <TooManyArguments occurrences="1">
+      <code>setStatusCode</code>
+    </TooManyArguments>
+  </file>
+  <file src="src/ParameterMatcher.php">
+    <MixedArgument occurrences="2">
+      <code>$method</code>
+      <code>$object</code>
+    </MixedArgument>
+    <MixedArgumentTypeCoercion occurrences="1">
+      <code>$pn</code>
+    </MixedArgumentTypeCoercion>
+    <MixedAssignment occurrences="6">
+      <code>$dispatchParams[]</code>
+      <code>$dispatchParams[]</code>
+      <code>$method</code>
+      <code>$normalParams[str_replace(['-', '_'], '', strtolower($pn))]</code>
+      <code>$object</code>
+      <code>$pv</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/RpcController.php">
+    <MixedArgument occurrences="2">
+      <code>$action</code>
+      <code>$routeParameters ?: []</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="4">
+      <code>$action</code>
+      <code>$contentNegotiationParams</code>
+      <code>$result</code>
+      <code>$routeParameters</code>
+    </MixedAssignment>
+    <MixedMethodCall occurrences="1">
+      <code>getRouteParams</code>
+    </MixedMethodCall>
+    <PossiblyNullArgument occurrences="1">
+      <code>$callable</code>
+    </PossiblyNullArgument>
+    <PossiblyNullReference occurrences="2">
+      <code>getParam</code>
+      <code>getParams</code>
+    </PossiblyNullReference>
+    <RedundantCondition occurrences="1">
+      <code>is_array($this-&gt;wrappedCallable) &amp;&amp; is_callable($this-&gt;wrappedCallable)</code>
+    </RedundantCondition>
+  </file>
+  <file src="test/Factory/OptionsListenerFactoryTest.php">
+    <MixedAssignment occurrences="1">
+      <code>$actual</code>
+    </MixedAssignment>
+  </file>
+  <file src="test/Factory/RpcControllerFactoryTest.php">
+    <MixedArrayAccess occurrences="2">
+      <code>$wrappedCallable[0]</code>
+      <code>$wrappedCallable[1]</code>
+    </MixedArrayAccess>
+    <MixedAssignment occurrences="2">
+      <code>$actual</code>
+      <code>$wrappedCallable</code>
+    </MixedAssignment>
+    <MixedInferredReturnType occurrences="1">
+      <code>class-string</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement occurrences="1">
+      <code>LegacyRouteMatch::class</code>
+    </MixedReturnStatement>
+    <UndefinedClass occurrences="4">
+      <code>Foo</code>
+      <code>Foo</code>
+      <code>LegacyRouteMatch</code>
+      <code>\ZfTest\Rpc\Factory\TestAsset\Foo</code>
+    </UndefinedClass>
+  </file>
+</files>

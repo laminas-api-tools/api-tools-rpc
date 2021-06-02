@@ -121,7 +121,8 @@ class OptionsListener implements ListenerAggregateInterface
     /**
      * Create the Allow header
      *
-     * @param  array $options
+     * @param array $options
+     * @return void
      */
     protected function createAllowHeader(array $options, Response $response)
     {
