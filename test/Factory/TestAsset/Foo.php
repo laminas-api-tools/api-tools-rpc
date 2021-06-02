@@ -6,11 +6,11 @@ namespace LaminasTest\ApiTools\Rpc\Factory\TestAsset;
 
 class Foo
 {
-    public function bar()
+    public function bar(): void
     {
     }
 
-    public static function baz()
+    public static function baz(): void
     {
     }
 }

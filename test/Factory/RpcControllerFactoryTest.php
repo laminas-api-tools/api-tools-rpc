@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LaminasTest\ApiTools\Rpc\Factory;
 
-use Interop\Container\ContainerInterface;
 use Laminas\ApiTools\Rpc\Factory\RpcControllerFactory;
 use Laminas\ApiTools\Rpc\RpcController;
 use Laminas\EventManager\EventManagerInterface;
@@ -15,10 +14,8 @@ use Laminas\Mvc\Router\RouteMatch as LegacyRouteMatch;
 use Laminas\Router\RouteMatch;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Prophecy\Prophecy\ProphecyInterface;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -26,12 +23,10 @@ use function class_exists;
 
 class RpcControllerFactoryTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /** @var ServiceLocatorInterface|ProphecyInterface */
+    /** @var ServiceLocatorInterface&MockObject */
     private $services;
 
-    /** @var ControllerManager|ProphecyInterface */
+    /** @var ControllerManager&MockObject */
     private $controllers;
 
     /** @var RpcControllerFactory */
@@ -39,22 +34,29 @@ class RpcControllerFactoryTest extends TestCase
 
     public function setUp(): void
     {
-        $this->services = $services = $this->prophesize(ServiceLocatorInterface::class);
-        $services->willImplement(ContainerInterface::class);
-
-        $this->controllers = $this->prophesize(ControllerManager::class);
-        $this->controllers->getServiceLocator()->willReturn($services->reveal());
-
-        $services->has('ControllerManager')->willReturn(true);
-        $services->get('ControllerManager')->willReturn($this->controllers->reveal());
+        $this->services    = $this->createMock(ServiceLocatorInterface::class);
+        $this->controllers = $this->createMock(ControllerManager::class);
+        $this->controllers->method('getServiceLocator')->willReturn($this->services);
 
         $this->factory = new RpcControllerFactory();
     }
 
     /**
+     * @param ServiceLocatorInterface&MockObject $container
+     */
+    private function prepareServiceContainer($container, array $hasMap, array $getMap): void
+    {
+        $hasMap[] = ['ControllerManager', true];
+        $getMap[] = ['ControllerManager', $this->controllers];
+
+        $container->method('has')->will($this->returnValueMap($hasMap));
+        $container->method('get')->will($this->returnValueMap($getMap));
+    }
+
+    /**
      * @group 7
      */
-    public function testWillPullNonCallableStaticCallableFromControllerManagerIfServiceIsPresent()
+    public function testWillPullNonCallableStaticCallableFromControllerManagerIfServiceIsPresent(): void
     {
         $config = [
             'api-tools-rpc' => [
@@ -63,14 +65,19 @@ class RpcControllerFactoryTest extends TestCase
                 ],
             ],
         ];
-        $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn($config);
+        $this->prepareServiceContainer(
+            $this->services,
+            [['config', true]],
+            [['config', $config]]
+        );
 
-        $foo = $this->prophesize('stdClass');
-        $this->controllers->has('Foo')->willReturn(true);
-        $this->controllers->get('Foo')->willReturn($foo->reveal());
+        $foo = new class {
+        };
 
-        $controllers = $this->controllers->reveal();
+        $this->controllers->method('has')->with('Foo')->willReturn(true);
+        $this->controllers->method('get')->with('Foo')->willReturn($foo);
+
+        $controllers = $this->controllers;
 
         $this->assertTrue($this->factory->canCreateServiceWithName(
             $controllers,
@@ -84,13 +91,13 @@ class RpcControllerFactoryTest extends TestCase
         );
 
         $this->assertInstanceOf(RpcController::class, $controller);
-        self::assertControllerWrappedCallable([$foo->reveal(), 'bar'], $controller);
+        self::assertControllerWrappedCallable([$foo, 'bar'], $controller);
     }
 
     /**
      * @group 7
      */
-    public function testWillPullNonCallableStaticCallableFromServiceManagerIfServiceIsPresent()
+    public function testWillPullNonCallableStaticCallableFromServiceManagerIfServiceIsPresent(): void
     {
         $config = [
             'api-tools-rpc' => [
@@ -99,16 +106,25 @@ class RpcControllerFactoryTest extends TestCase
                 ],
             ],
         ];
-        $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn($config);
 
-        $foo = $this->prophesize('stdClass');
-        $this->services->has('Foo')->willReturn(true);
-        $this->services->get('Foo')->willReturn($foo->reveal());
+        $foo = new class {
+        };
 
-        $this->controllers->has('Foo')->willReturn(false);
+        $this->prepareServiceContainer(
+            $this->services,
+            [
+                ['config', true],
+                ['Foo', true],
+            ],
+            [
+                ['config', $config],
+                ['Foo', $foo],
+            ]
+        );
 
-        $controllers = $this->controllers->reveal();
+        $this->controllers->method('has')->with('Foo')->willReturn(false);
+
+        $controllers = $this->controllers;
 
         $this->assertTrue($this->factory->canCreateServiceWithName(
             $controllers,
@@ -122,13 +138,13 @@ class RpcControllerFactoryTest extends TestCase
         );
 
         $this->assertInstanceOf(RpcController::class, $controller);
-        self::assertControllerWrappedCallable([$foo->reveal(), 'bar'], $controller);
+        self::assertControllerWrappedCallable([$foo, 'bar'], $controller);
     }
 
     /**
      * @group 7
      */
-    public function testWillInstantiateCallableClassIfClassExists()
+    public function testWillInstantiateCallableClassIfClassExists(): void
     {
         $config = [
             'api-tools-rpc' => [
@@ -137,17 +153,24 @@ class RpcControllerFactoryTest extends TestCase
                 ],
             ],
         ];
-        $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn($config);
+        $this->prepareServiceContainer(
+            $this->services,
+            [
+                ['config', true],
+                [TestAsset\Foo::class, false],
+                [Foo::class, false],
+            ],
+            [['config', $config]]
+        );
 
-        $this->controllers->has(TestAsset\Foo::class)->willReturn(false);
+        $this->controllers
+            ->method('has')
+            ->will($this->returnValueMap([
+                [TestAsset\Foo::class, false],
+                [Foo::class, false],
+            ]));
 
-        $this->controllers->has(Foo::class)->willReturn(false);
-        $this->services->has(TestAsset\Foo::class)->willReturn(false);
-
-        $this->services->has(Foo::class)->willReturn(false);
-
-        $controllers = $this->controllers->reveal();
+        $controllers = $this->controllers;
 
         $this->assertTrue($this->factory->canCreateServiceWithName(
             $controllers,
@@ -170,68 +193,97 @@ class RpcControllerFactoryTest extends TestCase
         $this->assertEquals('bar', $callable[1]);
     }
 
-    public function testReportsCannotCreateServiceIfConfigIsMissing()
+    public function testReportsCannotCreateServiceIfConfigIsMissing(): void
     {
-        $this->services->has('config')->willReturn(false);
+        $this->prepareServiceContainer(
+            $this->services,
+            [['config', false]],
+            []
+        );
         $this->assertFalse($this->factory->canCreateServiceWithName(
-            $this->controllers->reveal(),
+            $this->controllers,
             'Controller\Foo',
             'Controller\Foo'
         ));
     }
 
-    public function testReportsCannotCreateServiceIfRpcConfigIsMissing()
+    public function testReportsCannotCreateServiceIfRpcConfigIsMissing(): void
     {
-        $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn([]);
+        $this->prepareServiceContainer(
+            $this->services,
+            [['config', true]],
+            [['config', []]],
+        );
         $this->assertFalse($this->factory->canCreateServiceWithName(
-            $this->controllers->reveal(),
+            $this->controllers,
             'Controller\Foo',
             'Controller\Foo'
         ));
     }
 
-    public function testReportsCannotCreateServiceIfRpcConfigDoesNotContainServiceName()
+    public function testReportsCannotCreateServiceIfRpcConfigDoesNotContainServiceName(): void
     {
-        $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn(['api-tools-rpc' => []]);
+        $this->prepareServiceContainer(
+            $this->services,
+            [['config', true]],
+            [['config', ['api-tools-rpc' => []]]],
+        );
         $this->assertFalse($this->factory->canCreateServiceWithName(
-            $this->controllers->reveal(),
+            $this->controllers,
             'Controller\Foo',
             'Controller\Foo'
         ));
     }
 
-    public function testReportsCannotCreateServiceIfRpcConfigForControllerIsNotArray()
+    public function testReportsCannotCreateServiceIfRpcConfigForControllerIsNotArray(): void
     {
-        $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn([
-            'api-tools-rpc' => [
-                'Controller\Foo' => true,
+        $this->prepareServiceContainer(
+            $this->services,
+            [['config', true]],
+            [
+                [
+                    'config',
+                    [
+                        'api-tools-rpc' => [
+                            'Controller\Foo' => true,
+                        ],
+                    ],
+                ],
             ],
-        ]);
+        );
         $this->assertFalse($this->factory->canCreateServiceWithName(
-            $this->controllers->reveal(),
+            $this->controllers,
             'Controller\Foo',
             'Controller\Foo'
         ));
     }
 
-    public function testReportsCannotCreateServiceIfRpcConfigForControllerDoesNotContainCallableKey()
+    public function testReportsCannotCreateServiceIfRpcConfigForControllerDoesNotContainCallableKey(): void
     {
-        $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn([
-            'api-tools-rpc' => [
-                'Controller\Foo' => [],
+        $this->prepareServiceContainer(
+            $this->services,
+            [['config', true]],
+            [
+                [
+                    'config',
+                    [
+                        'api-tools-rpc' => [
+                            'Controller\Foo' => [],
+                        ],
+                    ],
+                ],
             ],
-        ]);
+        );
         $this->assertFalse($this->factory->canCreateServiceWithName(
-            $this->controllers->reveal(),
+            $this->controllers,
             'Controller\Foo',
             'Controller\Foo'
         ));
     }
 
+    /**
+     * @return array<string, array{0: mixed}>
+     */
     public function invalidCallables(): array
     {
         return [
@@ -249,24 +301,36 @@ class RpcControllerFactoryTest extends TestCase
      * @dataProvider invalidCallables
      * @param mixed $callable
      */
-    public function testServiceCreationFailsForInvalidCallable($callable)
+    public function testServiceCreationFailsForInvalidCallable($callable): void
     {
-        $this->services->get('config')->willReturn([
-            'api-tools-rpc' => [
-                'Controller\Foo' => [
-                    'callable' => $callable,
+        $this->prepareServiceContainer(
+            $this->services,
+            [['config', true]],
+            [
+                [
+                    'config',
+                    [
+                        'api-tools-rpc' => [
+                            'Controller\Foo' => [
+                                'callable' => $callable,
+                            ],
+                        ],
+                    ],
                 ],
             ],
-        ]);
+        );
         $this->expectException(ServiceNotCreatedException::class);
         $this->expectExceptionMessage('Unable to create');
         $this->factory->createServiceWithName(
-            $this->controllers->reveal(),
+            $this->controllers,
             'Controller\Foo',
             'Controller\Foo'
         );
     }
 
+    /**
+     * @return array<string, array{0: callable}>
+     */
     public function validCallbacks(): array
     {
         return [
@@ -283,19 +347,27 @@ class RpcControllerFactoryTest extends TestCase
 
     /**
      * @dataProvider validCallbacks
-     * @param callable $callable
      */
-    public function testServiceCreationReturnsRpcControllerWrappingCallableForValidCallbacks($callable)
+    public function testServiceCreationReturnsRpcControllerWrappingCallableForValidCallbacks(callable $callable): void
     {
-        $this->services->get('config')->willReturn([
-            'api-tools-rpc' => [
-                'Controller\Foo' => [
-                    'callable' => $callable,
+        $this->prepareServiceContainer(
+            $this->services,
+            [['config', true]],
+            [
+                [
+                    'config',
+                    [
+                        'api-tools-rpc' => [
+                            'Controller\Foo' => [
+                                'callable' => $callable,
+                            ],
+                        ],
+                    ],
                 ],
             ],
-        ]);
+        );
         $controller = $this->factory->createServiceWithName(
-            $this->controllers->reveal(),
+            $this->controllers,
             'Controller\Foo',
             'Controller\Foo'
         );
@@ -309,7 +381,7 @@ class RpcControllerFactoryTest extends TestCase
      *
      * @group 7
      */
-    public function testFactoryDoesNotEnterACircularDependencyLookupCondition()
+    public function testFactoryDoesNotEnterACircularDependencyLookupCondition(): void
     {
         $config = [
             'controllers'   => [
@@ -324,20 +396,24 @@ class RpcControllerFactoryTest extends TestCase
             ],
         ];
 
-        $this->services->has('config')->willReturn(true);
-        $this->services->get('config')->willReturn($config);
+        $services          = $this->createMock(ServiceLocatorInterface::class);
+        $controllerManager = new ControllerManager($services, $config['controllers']);
 
-        $this->services->has(TestAsset\Foo::class)->willReturn(false);
-
-        $this->services->has(\ZFTest\Rpc\Factory\TestAsset\Foo::class)->willReturn(false);
-
-        $this->services->get('EventManager')->willReturn($this->prophesize(EventManagerInterface::class)->reveal());
-        $this->services->get('ControllerPluginManager')->willReturn($this->prophesize(PluginManager::class)->reveal());
-
-        $controllerManager = new ControllerManager($this->services->reveal(), $config['controllers']);
-
-        $this->services->has('ControllerManager')->willReturn(true);
-        $this->services->get('ControllerManager')->willReturn($controllerManager);
+        $this->prepareServiceContainer(
+            $services,
+            [
+                ['config', true],
+                ['ControllerManager', true],
+                [TestAsset\Foo::class, false],
+                [\ZfTest\Rpc\Factory\TestAsset\Foo::class, false],
+            ],
+            [
+                ['config', $config],
+                ['ControllerManager', $controllerManager],
+                ['EventManager', $this->createMock(EventManagerInterface::class)],
+                ['ControllerPluginManager', $this->createMock(PluginManager::class)],
+            ],
+        );
 
         $this->assertTrue($controllerManager->has(TestAsset\Foo::class));
 
@@ -350,14 +426,27 @@ class RpcControllerFactoryTest extends TestCase
         $this->assertEquals('bar', $wrappedCallable[1]);
 
         // The lines below verify that the callable is correctly called when decorated in an RpcController
-        $event      = $this->prophesize(MvcEvent::class);
-        $routeMatch = $this->prophesize($this->getRouteMatchClass());
-        $event->getParam('LaminasContentNegotiationParameterData')->shouldBeCalled()->willReturn(false);
-        $event->getRouteMatch()->shouldBeCalled()->willReturn($routeMatch->reveal());
-        $event->setParam('LaminasContentNegotiationFallback', Argument::type('array'))->shouldBeCalled();
-        $event->setResult(null)->shouldBeCalled();
+        $event      = $this->createMock(MvcEvent::class);
+        $routeMatch = $this->createMock($this->getRouteMatchClass());
+        $event
+            ->expects($this->atLeastOnce())
+            ->method('getParam')
+            ->with('LaminasContentNegotiationParameterData')
+            ->willReturn(false);
+        $event
+            ->expects($this->atLeastOnce())
+            ->method('getRouteMatch')
+            ->willReturn($routeMatch);
+        $event
+            ->expects($this->atLeastOnce())
+            ->method('setParam')
+            ->with('LaminasContentNegotiationFallback', $this->isType('array'));
+        $event
+            ->expects($this->once())
+            ->method('setResult')
+            ->with(null);
 
-        $controller->onDispatch($event->reveal());
+        $controller->onDispatch($event);
     }
 
     /**
@@ -368,9 +457,9 @@ class RpcControllerFactoryTest extends TestCase
      *
      * We can remove this once we drop support for Laminas.
      *
-     * @return string
+     * @psalm-return class-string
      */
-    private function getRouteMatchClass()
+    private function getRouteMatchClass(): string
     {
         if (class_exists(RouteMatch::class)) {
             return RouteMatch::class;
@@ -378,7 +467,10 @@ class RpcControllerFactoryTest extends TestCase
         return LegacyRouteMatch::class;
     }
 
-    private static function getControllerWrappedCallable(RpcController $controller): callable
+    /**
+     * @return mixed Generally a callable, but not required to be for testing.
+     */
+    private static function getControllerWrappedCallable(RpcController $controller)
     {
         $reflectionClass    = new ReflectionClass($controller);
         $reflectionProperty = $reflectionClass->getProperty('wrappedCallable');
@@ -387,7 +479,10 @@ class RpcControllerFactoryTest extends TestCase
         return $reflectionProperty->getValue($controller);
     }
 
-    private static function assertControllerWrappedCallable(callable $expected, RpcController $controller): void
+    /**
+     * @param mixed $expected Should be callable, but not required to be for testing.
+     */
+    private static function assertControllerWrappedCallable($expected, RpcController $controller): void
     {
         $actual = self::getControllerWrappedCallable($controller);
 

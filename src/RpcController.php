@@ -21,17 +21,21 @@ use function ucwords;
 
 class RpcController extends BaseAbstractActionController
 {
-    /** @var callable */
+    /** @var null|callable */
     protected $wrappedCallable;
 
     /**
      * @param callable $wrappedCallable
+     * @return void
      */
     public function setWrappedCallable($wrappedCallable)
     {
         $this->wrappedCallable = $wrappedCallable;
     }
 
+    /**
+     * @return void
+     */
     public function onDispatch(MvcEvent $e)
     {
         $routeMatch = $e->getRouteMatch();
