@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
- * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
- */
+declare(strict_types=1);
 
 namespace LaminasTest\ApiTools\Rpc\Factory;
 
@@ -12,16 +8,18 @@ use Interop\Container\ContainerInterface;
 use Laminas\ApiTools\Rpc\Factory\OptionsListenerFactory;
 use Laminas\ApiTools\Rpc\OptionsListener;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ProphecyInterface;
+use ReflectionClass;
 
 class OptionsListenerFactoryTest extends TestCase
 {
-    /**
-     * @var ContainerInterface|ProphecyInterface
-     */
+    use ProphecyTrait;
+
+    /** @var ContainerInterface|ProphecyInterface */
     private $container;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->container = $this->prophesize(ContainerInterface::class);
     }
@@ -33,7 +31,7 @@ class OptionsListenerFactoryTest extends TestCase
 
         $listener = $factory($this->container->reveal());
         $this->assertInstanceOf(OptionsListener::class, $listener);
-        $this->assertAttributeEquals([], 'config', $listener);
+        self::assertListenerConfig([], $listener);
     }
 
     public function testWillCreateOptionsListenerWithEmptyConfigWhenNoRpcConfigPresent()
@@ -44,7 +42,7 @@ class OptionsListenerFactoryTest extends TestCase
 
         $listener = $factory($this->container->reveal());
         $this->assertInstanceOf(OptionsListener::class, $listener);
-        $this->assertAttributeEquals([], 'config', $listener);
+        self::assertListenerConfig([], $listener);
     }
 
     public function testWillCreateOptionsListenerWithRpcConfigWhenPresent()
@@ -59,6 +57,19 @@ class OptionsListenerFactoryTest extends TestCase
 
         $listener = $factory($this->container->reveal());
         $this->assertInstanceOf(OptionsListener::class, $listener);
-        $this->assertAttributeEquals(['foo' => 'bar'], 'config', $listener);
+        self::assertListenerConfig(['foo' => 'bar'], $listener);
+    }
+
+    /**
+     * @param array $expected
+     */
+    private static function assertListenerConfig(array $expected, OptionsListener $listener): void
+    {
+        $reflectionClass    = new ReflectionClass($listener);
+        $reflectionProperty = $reflectionClass->getProperty('config');
+        $reflectionProperty->setAccessible(true);
+        $actual = $reflectionProperty->getValue($listener);
+
+        self::assertEquals($expected, $actual);
     }
 }

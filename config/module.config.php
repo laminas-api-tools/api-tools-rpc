@@ -1,15 +1,11 @@
 <?php
 
-/**
- * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
- * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
- */
+declare(strict_types=1);
 
 namespace Laminas\ApiTools\Rpc;
 
 return [
-    'api-tools-rpc' => [
+    'api-tools-rpc'   => [
         // Array of Controller service name / configuration
         //
         // Configuration should include:
@@ -29,7 +25,7 @@ return [
         //       'callable'     => 'Api\Controller\Login::process',
         //   ],
     ],
-    'controllers' => [
+    'controllers'     => [
         'abstract_factories' => [
             Factory\RpcControllerFactory::class,
         ],

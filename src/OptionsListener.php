@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
- * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
- */
+declare(strict_types=1);
 
 namespace Laminas\ApiTools\Rpc;
 
@@ -15,13 +11,18 @@ use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 
+use function array_key_exists;
+use function array_walk;
+use function implode;
+use function in_array;
+use function is_string;
+use function strtoupper;
+
 class OptionsListener implements ListenerAggregateInterface
 {
     use ListenerAggregateTrait;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $config;
 
     /**
@@ -41,8 +42,7 @@ class OptionsListener implements ListenerAggregateInterface
     }
 
     /**
-     * @param  MvcEvent $event
-     * @return void|\Laminas\Http\Response
+     * @return void|Response
      */
     public function onRoute(MvcEvent $event)
     {
@@ -65,7 +65,8 @@ class OptionsListener implements ListenerAggregateInterface
 
         $config = $this->config[$controller];
 
-        if (! array_key_exists('http_methods', $config)
+        if (
+            ! array_key_exists('http_methods', $config)
             || empty($config['http_methods'])
         ) {
             // No HTTP methods set for controller, nothing to do
@@ -121,7 +122,6 @@ class OptionsListener implements ListenerAggregateInterface
      * Create the Allow header
      *
      * @param  array $options
-     * @param  Response $response
      */
     protected function createAllowHeader(array $options, Response $response)
     {
@@ -134,7 +134,6 @@ class OptionsListener implements ListenerAggregateInterface
      *
      * Creates an empty response with an Allow header.
      *
-     * @param  MvcEvent $event
      * @param  array $options
      * @return Response
      */
@@ -148,7 +147,6 @@ class OptionsListener implements ListenerAggregateInterface
     /**
      * Prepare a 405 response
      *
-     * @param  MvcEvent $event
      * @param  array $options
      * @return Response
      */

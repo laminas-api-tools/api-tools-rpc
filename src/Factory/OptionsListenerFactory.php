@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @see       https://github.com/laminas-api-tools/api-tools-rpc for the canonical source repository
- * @copyright https://github.com/laminas-api-tools/api-tools-rpc/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas-api-tools/api-tools-rpc/blob/master/LICENSE.md New BSD License
- */
+declare(strict_types=1);
 
 namespace Laminas\ApiTools\Rpc\Factory;
 
@@ -14,7 +10,6 @@ use Laminas\ApiTools\Rpc\OptionsListener;
 class OptionsListenerFactory
 {
     /**
-     * @param ContainerInterface $container
      * @return OptionsListener
      */
     public function __invoke(ContainerInterface $container)
@@ -25,7 +20,6 @@ class OptionsListenerFactory
     /**
      * Attempt to marshal configuration from the "config" service.
      *
-     * @param ContainerInterface $container
      * @return array
      */
     private function getConfig(ContainerInterface $container)
