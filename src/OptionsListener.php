@@ -10,9 +10,9 @@ use Laminas\EventManager\ListenerAggregateTrait;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
+use Stringable;
 
 use function array_key_exists;
-use function array_walk;
 use function implode;
 use function in_array;
 use function is_string;
@@ -103,8 +103,8 @@ class OptionsListener implements ListenerAggregateInterface
      *
      * Ensure all options in the array are UPPERCASE.
      *
-     * @param  string|array $methods
-     * @return array
+     * @param  string|array<string> $methods
+     * @return list<string>
      */
     protected function normalizeMethods($methods)
     {
@@ -112,16 +112,19 @@ class OptionsListener implements ListenerAggregateInterface
             $methods = (array) $methods;
         }
 
-        array_walk($methods, function (&$value) {
-            return strtoupper($value);
-        });
-        return $methods;
+        $normalized = [];
+        foreach ($methods as $method) {
+            $normalized[] = strtoupper($method);
+        }
+
+        return $normalized;
     }
 
     /**
      * Create the Allow header
      *
      * @param array $options
+     * @psalm-param array<array-key,null|Stringable|scalar> $options
      * @return void
      */
     protected function createAllowHeader(array $options, Response $response)
@@ -136,6 +139,7 @@ class OptionsListener implements ListenerAggregateInterface
      * Creates an empty response with an Allow header.
      *
      * @param  array $options
+     * @psalm-param array<array-key,null|Stringable|scalar> $options
      * @return Response
      */
     protected function getOptionsResponse(MvcEvent $event, array $options)
@@ -149,6 +153,7 @@ class OptionsListener implements ListenerAggregateInterface
      * Prepare a 405 response
      *
      * @param  array $options
+     * @psalm-param array<array-key,null|Stringable|scalar> $options
      * @return Response
      */
     protected function get405Response(MvcEvent $event, array $options)
