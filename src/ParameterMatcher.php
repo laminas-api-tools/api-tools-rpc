@@ -17,6 +17,7 @@ use Laminas\Stdlib\RequestInterface;
 use Laminas\Stdlib\ResponseInterface;
 use ReflectionException;
 use ReflectionFunction;
+use ReflectionNamedType;
 use ReflectionObject;
 
 use function count;
@@ -68,8 +69,9 @@ class ParameterMatcher
         foreach ($reflMethodParams as $reflMethodParam) {
             $paramName             = $reflMethodParam->getName();
             $normalMethodParamName = str_replace(['-', '_'], '', strtolower($paramName));
-            if ($reflectionTypehint = $reflMethodParam->getClass()) {
-                $typehint = $reflectionTypehint->getName();
+            $reflectionType        = $reflMethodParam->getType();
+            if ($reflectionType instanceof ReflectionNamedType && ! $reflectionType->isBuiltin()) {
+                $typehint = $reflectionType->getName();
 
                 if (
                     $typehint === PhpEnvironmentRequest::class
