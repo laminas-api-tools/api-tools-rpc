@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\ApiTools\Rpc\Factory;
 
-use Interop\Container\ContainerInterface;
 use Laminas\ApiTools\Rpc\OptionsListener;
+use Psr\Container\ContainerInterface;
 
 class OptionsListenerFactory
 {

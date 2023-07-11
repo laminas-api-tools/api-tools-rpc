@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace LaminasTest\ApiTools\Rpc\Factory;
 
-use Interop\Container\ContainerInterface;
 use Laminas\ApiTools\Rpc\Factory\OptionsListenerFactory;
 use Laminas\ApiTools\Rpc\OptionsListener;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
 class OptionsListenerFactoryTest extends TestCase
